@@ -12,7 +12,7 @@ type Permission struct {
 	Write     string `json:"write"`
 }
 
-// GET /api/permissions
+// GetPermissions returns a list of all permissions for all users.
 func (r *Rabbit) GetPermissions() ([]Permission, error) {
 	body, err := r.getRequest("/api/permissions")
 	if err != nil {
@@ -29,7 +29,7 @@ func (r *Rabbit) GetPermissions() ([]Permission, error) {
 
 }
 
-// GET /api/permissions/vhost/user
+// GetPermissions returns an individual permission of a user and virtual host
 func (r *Rabbit) GetPermission(vhost, user string) (Permission, error) {
 	if vhost == "/" {
 		vhost = "%2f"
@@ -50,7 +50,9 @@ func (r *Rabbit) GetPermission(vhost, user string) (Permission, error) {
 
 }
 
-// PUT /api/permissions/vhost/user configure="" read="" write=""
+// CreatePermission creates the necessery configure, write and read permissions
+// for the the given vhost and user. For more info please look at:
+// http://www.rabbitmq.com/access-control.html
 func (r *Rabbit) CreatePermission(vhost, user, configure, write, read string) error {
 	if vhost == "/" {
 		vhost = "%2f"
@@ -75,7 +77,7 @@ func (r *Rabbit) CreatePermission(vhost, user, configure, write, read string) er
 	return nil
 }
 
-// DELETE /api/permissions/vhost/user
+// DeletePermission deletes the permission for the given vhost and user
 func (r *Rabbit) DeletePermission(vhost, user string) error {
 	if vhost == "/" {
 		vhost = "%2f"

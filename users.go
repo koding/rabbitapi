@@ -2,7 +2,6 @@ package rabbitapi
 
 import (
 	"encoding/json"
-	"fmt"
 )
 
 type User struct {
@@ -12,7 +11,7 @@ type User struct {
 	Tags         string `json:"tags"`
 }
 
-// GET /api/users
+// GetUsers() returns a list of all users.
 func (r *Rabbit) GetUsers() ([]User, error) {
 	body, err := r.getRequest("/api/users")
 	if err != nil {
@@ -29,7 +28,7 @@ func (r *Rabbit) GetUsers() ([]User, error) {
 
 }
 
-// GET /api/users/name
+// GetUser returns an individual user.
 func (r *Rabbit) GetUser(name string) (User, error) {
 	body, err := r.getRequest("/api/users/" + name)
 	if err != nil {
@@ -45,8 +44,12 @@ func (r *Rabbit) GetUser(name string) (User, error) {
 	return user, nil
 }
 
-// PUT /api/users/name password=secret tags=""
-func (r *Rabbit) CreateUser(name, password string, tags string) error {
+// CreateUser creates a new user with the given password and tags.
+// The tags key is mandatory (means you can give an empty string). tags is a
+// comma-separated list of tags for the user. Currently recognised tags are
+// "administrator", "monitoring" and "management" (please aware that tags
+// should be in the form of "foo, bar").
+func (r *Rabbit) CreateUser(name, password, tags string) error {
 	user := &User{
 		Password: password,
 		Tags:     tags,
@@ -57,8 +60,6 @@ func (r *Rabbit) CreateUser(name, password string, tags string) error {
 		return err
 	}
 
-	fmt.Println(string(data))
-
 	err = r.putRequest("/api/users/"+name, data)
 	if err != nil {
 		return err
@@ -67,7 +68,7 @@ func (r *Rabbit) CreateUser(name, password string, tags string) error {
 	return nil
 }
 
-// DELETE /api/users/name
+// DeleteUser deletes an individual user.
 func (r *Rabbit) DeleteUser(name string) error {
 	err := r.deleteRequest("/api/users/" + name)
 	if err != nil {
@@ -77,7 +78,7 @@ func (r *Rabbit) DeleteUser(name string) error {
 	return nil
 }
 
-// GET /api/users/name/permissions
+// GetUserPermissions returns a list of all permissions for a given user.
 func (r *Rabbit) GetUserPermissions(name string) ([]Permission, error) {
 	body, err := r.getRequest("/api/users/" + name + "/permissions")
 	if err != nil {

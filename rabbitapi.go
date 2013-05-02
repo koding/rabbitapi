@@ -17,7 +17,12 @@ type Rabbit struct {
 	Url      string
 }
 
-// To create a new rabbit struct instance
+// Auth is used to create the initial struct that will used for all api calls.
+// Default values are:
+//
+//    Username : guest
+//    Password : guest
+//    Url:  http://localhost:15672
 func Auth(username, password, url string) *Rabbit {
 	return &Rabbit{
 		Username: username,
@@ -68,8 +73,6 @@ func (r *Rabbit) putRequest(endpoint string, body []byte) error {
 	}
 	defer resp.Body.Close()
 
-	// io.Copy(os.Stdout, resp.Body)
-
 	if resp.StatusCode != 204 {
 		return fmt.Errorf(resp.Status)
 	}
@@ -90,8 +93,6 @@ func (r *Rabbit) deleteRequest(endpoint string) error {
 		log.Println(err)
 	}
 	defer resp.Body.Close()
-
-	// io.Copy(os.Stdout, resp.Body)
 
 	if resp.StatusCode != 204 {
 		return fmt.Errorf(resp.Status)

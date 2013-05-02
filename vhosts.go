@@ -9,7 +9,7 @@ type Vhost struct {
 	Tracing bool
 }
 
-// GET /api/vhosts
+// GetVhosts returns a list of all vhosts.
 func (r *Rabbit) GetVhosts() ([]Vhost, error) {
 	body, err := r.getRequest("/api/vhosts")
 	if err != nil {
@@ -25,7 +25,7 @@ func (r *Rabbit) GetVhosts() ([]Vhost, error) {
 	return vhosts, nil
 }
 
-// GET /api/vhost/name
+// GetVhost returns an individual vhost.
 func (r *Rabbit) GetVhost(name string) (Vhost, error) {
 	if name == "/" {
 		name = "%2f"
@@ -46,7 +46,7 @@ func (r *Rabbit) GetVhost(name string) (Vhost, error) {
 
 }
 
-// PUT /api/vhost/name
+// CreateVhost creates an invididual vhost.
 func (r *Rabbit) CreateVhost(name string) error {
 	if name == "/" {
 		name = "%2f"
@@ -60,7 +60,7 @@ func (r *Rabbit) CreateVhost(name string) error {
 	return nil
 }
 
-// DELETE /api/vhost/name
+// DeleteVhost deletes an individual vhost.
 func (r *Rabbit) DeleteVhost(name string) error {
 	if name == "/" {
 		name = "%2f"
@@ -74,7 +74,8 @@ func (r *Rabbit) DeleteVhost(name string) error {
 	return nil
 }
 
-// GET /api/vhost/name/permissions
+// GetVhostPermissions returns a list of all permissions for a given virtual
+// host.
 func (r *Rabbit) GetVhostPermissions(vhost string) ([]Permission, error) {
 	if vhost == "/" {
 		vhost = "%2f"
