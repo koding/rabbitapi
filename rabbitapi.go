@@ -18,12 +18,24 @@ type Rabbit struct {
 }
 
 // Auth is used to create the initial struct that will used for all api calls.
-// Default values are:
+// If you pass empty strings, default values will be:
 //
 //    Username : guest
 //    Password : guest
 //    Url:  http://localhost:15672
 func Auth(username, password, url string) *Rabbit {
+	if username == "" {
+		username = "guest"
+	}
+
+	if password == "" {
+		password = "guest"
+	}
+
+	if url == "" {
+		url = "http://localhost:15672"
+	}
+
 	return &Rabbit{
 		Username: username,
 		Password: password,
