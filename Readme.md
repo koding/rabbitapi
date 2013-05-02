@@ -1,39 +1,29 @@
-#rabbitapi
+# rabbitapi
 
-Implementation of [RabbitMq Management HTTP Api](http://hg.rabbitmq.com/rabbitmq-management/raw-file/rabbitmq_v3_1_0/priv/www/api/index.html) in Go. Alpha status.
+Implementation of [RabbitMq Management HTTP
+Api](http://hg.rabbitmq.com/rabbitmq-management/raw-file/rabbitmq_v3_1_0/priv/www/api/index.html)
+in Go. Alpha status.
 
+For more information and documenation please read [Godoc RabbitApi
+page](http://godoc.org/github.com/koding/rabbitapi)
 
-Currently supported api calls are:
-
-```
-GET     /api/vhosts
-GET     /api/vhost/name
-PUT     /api/vhost/name
-DELETE  /api/vhost/name
-GET     /api/vhost/name/permissions
-```
+# setup
 
 ```
-GET     /api/users
-GET     /api/users/name
-PUT     /api/users/name
-DELETE  /api/users/name
-GET     /api/users/name/permissions
+go get github.com/koding/rabbitapi
 ```
 
-```
-GET     /api/permissions
-GET     /api/permissions/vhost/user
-PUT     /api/permissions/vhost/user
-DELETE  /api/permissions/vhost/user
-```
+# example usage
 
-
-Example code:
+First create a rabbitapi instance with your api credentials
 
 ```
 r := rabbitapi.Auth("guest", "guest", "http://localhost:15672")
+```
 
+To get a list of all vhosts
+
+```
 vhosts, err := r.GetVhosts()
 if err != nil {
 	fmt.Println(err)
@@ -42,10 +32,25 @@ if err != nil {
 }
 ```
 
+Create an exchange on vhost `/` with the name `rabbitapi`, `durable=false`,
+`autoDelete=true`, `internal=false,` and `arguments=nil`
+
+```
+err = r.CreateExchange("/", "rabbitapi", "topic", false, true, false, nil)
+if err != nil {
+	fmt.Println(err)
+}
+```
+
+Get an exchange we created previously on the vhost `/`
+
+```
+exchange, err := r.GetExchange("/", "rabbitapi")
+if err != nil {
+	fmt.Println(err)
+}
+fmt.Println(exchange) // exchange.Type is 'topic'
+```
+
 for more examples look into `*_test.go` files.
 
-# setup
-
-```
-go get github.com/koding/rabbitapi
-```

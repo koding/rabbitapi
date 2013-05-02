@@ -1,5 +1,5 @@
 /*
-Implementation of RabbitMq Management HTTP Api in Go
+Implementation of RabbitMq Management HTTP Api in Go. Alpha status.
 
 Currently supported api calls are:
 
@@ -44,6 +44,6 @@ Example code:
 	if err != nil {
 		fmt.Println(err)
 	}
-    fmt.Println(exchange) // exchange.Type is 'topic'
+	fmt.Println(exchange) // exchange.Type is 'topic'
 */
 package rabbitapi
