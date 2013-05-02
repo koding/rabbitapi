@@ -2,6 +2,7 @@ package rabbitapi
 
 import (
 	"bytes"
+	"encoding/json"
 	"fmt"
 	"io"
 	"io/ioutil"
@@ -15,6 +16,10 @@ type Rabbit struct {
 	Username string
 	Password string
 	Url      string
+}
+
+type Status struct {
+	Status string
 }
 
 // Auth is used to create the initial struct that will used for all api calls.
@@ -41,6 +46,34 @@ func Auth(username, password, url string) *Rabbit {
 		Password: password,
 		Url:      url,
 	}
+}
+
+// AlivenessTest declares a test queue for the given vhost, then publishes and
+// consumes a message. Intended for use by monitoring tools. If everything is
+// working correctly, will return HTTP status 200 with body. Note: the test
+// queue will not be deleted (to to prevent queue churn if this is repeatedly
+// pinged).
+func (r *Rabbit) AlivenessTest(vhost string) error {
+	if vhost == "/" {
+		vhost = "%2f"
+	}
+
+	body, err := r.getRequest("/api/aliveness-test/" + vhost)
+	if err != nil {
+		return err
+	}
+
+	status := Status{}
+	err = json.Unmarshal(body, &status)
+	if err != nil {
+		return err
+	}
+
+	if status.Status != "ok" {
+		return fmt.Errorf("there is a problem on vhost '%s'", vhost)
+	}
+	return nil
+
 }
 
 func (r *Rabbit) getRequest(endpoint string) ([]byte, error) {

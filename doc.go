@@ -25,6 +25,8 @@ Currently supported api calls are:
     PUT     /api/permissions/vhost/user
     DELETE  /api/permissions/vhost/user
 
+    GET     /api/aliveness-test/vhost
+
 Example code:
 
 	r := rabbitapi.Auth("guest", "guest", "http://localhost:15672")
