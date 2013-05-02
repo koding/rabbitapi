@@ -3,6 +3,11 @@ Implementation of RabbitMq Management HTTP Api in Go
 
 Currently supported api calls are:
 
+    GET     /api/exchanges/
+    GET     /api/exchanges/vhost/name
+    PUT     /api/exchanges/vhost/name
+    DELETE  /api/exchanges/vhost/name
+
     GET     /api/vhosts
     GET     /api/vhost/name
     PUT     /api/vhost/name
@@ -30,6 +35,19 @@ Example code:
 		fmt.Println("vhosts:", vhosts)
 	}
 
+	err = r.CreateExchange("/", "rabbitapi", "topic", false, false, false, nil)
+	if err != nil {
+		fmt.Println(err)
+	}
+
+	exchange, err := r.GetExchange("/", "rabbitapi")
+	if err != nil {
+		fmt.Println(err)
+	}
+    fmt.Println(exchange)
+    // exchange.Type -> topic
+    // exchange.Durable -> false
+    // ...
 
 */
 package rabbitapi
