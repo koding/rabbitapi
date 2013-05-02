@@ -9,10 +9,10 @@ Currently supported api calls are:
     DELETE  /api/exchanges/vhost/name
 
     GET     /api/vhosts
-    GET     /api/vhost/name
-    PUT     /api/vhost/name
-    DELETE  /api/vhost/name
-    GET     /api/vhost/name/permissions
+    GET     /api/vhosts/name
+    PUT     /api/vhosts/name
+    DELETE  /api/vhosts/name
+    GET     /api/vhosts/name/permissions
 
     GET     /api/users
     GET     /api/users/name
