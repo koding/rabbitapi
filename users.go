@@ -2,17 +2,14 @@ package rabbitapi
 
 import (
 	"encoding/json"
+	"fmt"
 )
 
 type User struct {
-	Name         string
+	Name         string `json:"name`
 	PasswordHash string `json:"password_hash"`
-	Tags         string
-}
-
-type UserCreate struct {
-	Password string `json:"password"`
-	Tags     string `json:"tags"`
+	Password     string `json:"password"`
+	Tags         string `json:"tags"`
 }
 
 // GET /api/users
@@ -50,7 +47,7 @@ func (r *Rabbit) GetUser(name string) (User, error) {
 
 // PUT /api/users/name password=secret tags=""
 func (r *Rabbit) CreateUser(name, password string, tags string) error {
-	user := &UserCreate{
+	user := &User{
 		Password: password,
 		Tags:     tags,
 	}
@@ -59,6 +56,8 @@ func (r *Rabbit) CreateUser(name, password string, tags string) error {
 	if err != nil {
 		return err
 	}
+
+	fmt.Println(string(data))
 
 	err = r.putRequest("/api/users/"+name, data)
 	if err != nil {

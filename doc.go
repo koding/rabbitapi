@@ -1,6 +1,5 @@
 /*
 Implementation of RabbitMq Management HTTP Api in Go
-http://hg.rabbitmq.com/rabbitmq-management/raw-file/rabbitmq_v3_1_0/priv/www/api/index.html
 
 Currently supported api calls are:
 
