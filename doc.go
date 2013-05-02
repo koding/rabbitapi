@@ -44,10 +44,6 @@ Example code:
 	if err != nil {
 		fmt.Println(err)
 	}
-    fmt.Println(exchange)
-    // exchange.Type -> topic
-    // exchange.Durable -> false
-    // ...
-
+    fmt.Println(exchange) // exchange.Type is 'topic'
 */
 package rabbitapi
