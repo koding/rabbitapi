@@ -13,7 +13,7 @@ type User struct {
 
 // GetUsers() returns a list of all users.
 func (r *Rabbit) GetUsers() ([]User, error) {
-	body, err := r.getRequest("/api/users")
+	body, err := r.doRequest("GET", "/api/users", nil)
 	if err != nil {
 		return nil, err
 	}
@@ -30,7 +30,7 @@ func (r *Rabbit) GetUsers() ([]User, error) {
 
 // GetUser returns an individual user.
 func (r *Rabbit) GetUser(name string) (User, error) {
-	body, err := r.getRequest("/api/users/" + name)
+	body, err := r.doRequest("GET", "/api/users/"+name, nil)
 	if err != nil {
 		return User{}, err
 	}
@@ -60,7 +60,7 @@ func (r *Rabbit) CreateUser(name, password, tags string) error {
 		return err
 	}
 
-	err = r.putRequest("/api/users/"+name, data)
+	_, err = r.doRequest("PUT", "/api/users/"+name, data)
 	if err != nil {
 		return err
 	}
@@ -70,7 +70,7 @@ func (r *Rabbit) CreateUser(name, password, tags string) error {
 
 // DeleteUser deletes an individual user.
 func (r *Rabbit) DeleteUser(name string) error {
-	err := r.deleteRequest("/api/users/" + name)
+	_, err := r.doRequest("DELETE", "/api/users/"+name, nil)
 	if err != nil {
 		return err
 	}
@@ -80,7 +80,7 @@ func (r *Rabbit) DeleteUser(name string) error {
 
 // GetUserPermissions returns a list of all permissions for a given user.
 func (r *Rabbit) GetUserPermissions(name string) ([]Permission, error) {
-	body, err := r.getRequest("/api/users/" + name + "/permissions")
+	body, err := r.doRequest("GET", "/api/users/"+name+"/permissions", nil)
 	if err != nil {
 		return nil, err
 	}

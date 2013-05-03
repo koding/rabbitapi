@@ -11,7 +11,7 @@ type Vhost struct {
 
 // GetVhosts returns a list of all vhosts.
 func (r *Rabbit) GetVhosts() ([]Vhost, error) {
-	body, err := r.getRequest("/api/vhosts")
+	body, err := r.doRequest("GET", "/api/vhosts", nil)
 	if err != nil {
 		return nil, err
 	}
@@ -31,7 +31,7 @@ func (r *Rabbit) GetVhost(name string) (Vhost, error) {
 		name = "%2f"
 	}
 
-	body, err := r.getRequest("/api/vhosts/" + name)
+	body, err := r.doRequest("GET", "/api/vhosts/"+name, nil)
 	if err != nil {
 		return Vhost{}, err
 	}
@@ -52,7 +52,7 @@ func (r *Rabbit) CreateVhost(name string) error {
 		name = "%2f"
 	}
 
-	err := r.putRequest("/api/vhosts/"+name, nil)
+	_, err := r.doRequest("PUT", "/api/vhosts/"+name, nil)
 	if err != nil {
 		return err
 	}
@@ -66,7 +66,7 @@ func (r *Rabbit) DeleteVhost(name string) error {
 		name = "%2f"
 	}
 
-	err := r.deleteRequest("/api/vhosts/" + name)
+	_, err := r.doRequest("DELETE", "/api/vhosts/"+name, nil)
 	if err != nil {
 		return err
 	}
@@ -81,7 +81,7 @@ func (r *Rabbit) GetVhostPermissions(vhost string) ([]Permission, error) {
 		vhost = "%2f"
 	}
 
-	body, err := r.getRequest("/api/vhosts/" + vhost + "/permissions")
+	body, err := r.doRequest("GET", "/api/vhosts/"+vhost+"/permissions", nil)
 	if err != nil {
 		return nil, err
 	}

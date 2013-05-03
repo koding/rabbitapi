@@ -26,7 +26,7 @@ type ExchangeSource struct {
 
 // GetExchanges() returns a list of all exchanges.
 func (r *Rabbit) GetExchanges() ([]Exchange, error) {
-	body, err := r.getRequest("/api/exchanges")
+	body, err := r.doRequest("GET", "/api/exchanges", nil)
 	if err != nil {
 		return nil, err
 	}
@@ -46,7 +46,7 @@ func (r *Rabbit) GetVhostExchanges(vhost string) ([]Exchange, error) {
 		vhost = "%2f"
 	}
 
-	body, err := r.getRequest("/api/exchanges/" + vhost)
+	body, err := r.doRequest("GET", "/api/exchanges/"+vhost, nil)
 	if err != nil {
 		return nil, err
 	}
@@ -66,7 +66,7 @@ func (r *Rabbit) GetExchange(vhost, name string) (Exchange, error) {
 		vhost = "%2f"
 	}
 
-	body, err := r.getRequest("/api/exchanges/" + vhost + "/" + name)
+	body, err := r.doRequest("GET", "/api/exchanges/"+vhost+"/"+name, nil)
 	if err != nil {
 		return Exchange{}, err
 	}
@@ -103,7 +103,7 @@ func (r *Rabbit) CreateExchange(vhost, name, kind string, durable, autoDelete, i
 		return err
 	}
 
-	err = r.putRequest("/api/exchanges/"+vhost+"/"+name, data)
+	_, err = r.doRequest("PUT", "/api/exchanges/"+vhost+"/"+name, data)
 	if err != nil {
 		return err
 	}
@@ -117,7 +117,7 @@ func (r *Rabbit) DeleteExchange(vhost, name string) error {
 		vhost = "%2f"
 	}
 
-	err := r.deleteRequest("/api/exchanges/" + vhost + "/" + name)
+	_, err := r.doRequest("DELETE", "/api/exchanges/"+vhost+"/"+name, nil)
 	if err != nil {
 		return err
 	}
@@ -132,7 +132,8 @@ func (r *Rabbit) GetExchangeSource(vhost, name string) ([]ExchangeSource, error)
 		vhost = "%2f"
 	}
 
-	body, err := r.getRequest("/api/exchanges/" + vhost + "/" + name + "/bindings/source")
+	body, err := r.doRequest("GET", "/api/exchanges/"+vhost+"/"+name+"/bindings/source", nil)
+
 	if err != nil {
 		return nil, err
 	}

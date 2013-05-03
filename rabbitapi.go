@@ -3,6 +3,7 @@ package rabbitapi
 import (
 	"bytes"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io"
 	"io/ioutil"
@@ -58,7 +59,7 @@ func (r *Rabbit) AlivenessTest(vhost string) error {
 		vhost = "%2f"
 	}
 
-	body, err := r.getRequest("/api/aliveness-test/" + vhost)
+	body, err := r.doRequest("GET", "/api/aliveness-test/"+vhost, nil)
 	if err != nil {
 		return err
 	}
@@ -76,36 +77,10 @@ func (r *Rabbit) AlivenessTest(vhost string) error {
 
 }
 
-func (r *Rabbit) getRequest(endpoint string) ([]byte, error) {
-	req, err := r.newRequest("GET", endpoint, nil)
-	if err != nil {
-		log.Println(err)
-	}
-	req.SetBasicAuth(r.Username, r.Password)
-	req.Header.Set("Content-Type", "application/json")
-
-	resp, err := http.DefaultClient.Do(req)
-	if err != nil {
-		log.Println(err)
-	}
-
-	defer resp.Body.Close()
-
-	if resp.StatusCode != 200 {
-		return nil, fmt.Errorf(resp.Status)
-	}
-
-	body, err := ioutil.ReadAll(resp.Body)
-	if err != nil {
-		return nil, err
-	}
-
-	return body, nil
-}
-
-func (r *Rabbit) putRequest(endpoint string, body []byte) error {
-	reader := bytes.NewBuffer(body)
-	req, err := r.newRequest("PUT", endpoint, reader)
+// Our custom HTTP Request wrapper
+func (r *Rabbit) doRequest(method, endpoint string, body []byte) ([]byte, error) {
+	readerBody := bytes.NewBuffer(body)
+	req, err := r.newRequest(method, endpoint, readerBody)
 	if err != nil {
 		log.Println(err)
 	}
@@ -118,32 +93,26 @@ func (r *Rabbit) putRequest(endpoint string, body []byte) error {
 	}
 	defer resp.Body.Close()
 
-	if resp.StatusCode != 204 {
-		return fmt.Errorf(resp.Status)
+	switch method {
+	case "PUT", "DELETE":
+		if resp.StatusCode != 204 {
+			return nil, fmt.Errorf(resp.Status)
+		}
+		return nil, nil
+	case "GET":
+		if resp.StatusCode != 200 {
+			return nil, fmt.Errorf(resp.Status)
+		}
+
+		responseBody, err := ioutil.ReadAll(resp.Body)
+		if err != nil {
+			return nil, err
+		}
+
+		return responseBody, nil
+	default:
+		return nil, errors.New("Method is not supported")
 	}
-
-	return nil
-}
-
-func (r *Rabbit) deleteRequest(endpoint string) error {
-	req, err := r.newRequest("DELETE", endpoint, nil)
-	if err != nil {
-		log.Println(err)
-	}
-	req.SetBasicAuth(r.Username, r.Password)
-	req.Header.Set("Content-Type", "application/json")
-
-	resp, err := http.DefaultClient.Do(req)
-	if err != nil {
-		log.Println(err)
-	}
-	defer resp.Body.Close()
-
-	if resp.StatusCode != 204 {
-		return fmt.Errorf(resp.Status)
-	}
-
-	return nil
 }
 
 // modified version of http.NewRequest to not escape %2f paths. unfortunaley

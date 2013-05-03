@@ -14,7 +14,7 @@ type Permission struct {
 
 // GetPermissions returns a list of all permissions for all users.
 func (r *Rabbit) GetPermissions() ([]Permission, error) {
-	body, err := r.getRequest("/api/permissions")
+	body, err := r.doRequest("GET", "/api/permissions", nil)
 	if err != nil {
 		return nil, err
 	}
@@ -35,7 +35,7 @@ func (r *Rabbit) GetPermission(vhost, user string) (Permission, error) {
 		vhost = "%2f"
 	}
 
-	body, err := r.getRequest("/api/permissions/" + vhost + "/" + user)
+	body, err := r.doRequest("GET", "/api/permissions/"+vhost+"/"+user, nil)
 	if err != nil {
 		return Permission{}, err
 	}
@@ -69,7 +69,7 @@ func (r *Rabbit) CreatePermission(vhost, user, configure, write, read string) er
 		return err
 	}
 
-	err = r.putRequest("/api/permissions/"+vhost+"/"+user, data)
+	_, err = r.doRequest("PUT", "/api/permissions/"+vhost+"/"+user, data)
 	if err != nil {
 		return err
 	}
@@ -83,7 +83,7 @@ func (r *Rabbit) DeletePermission(vhost, user string) error {
 		vhost = "%2f"
 	}
 
-	err := r.deleteRequest("/api/permissions/" + vhost + "/" + user)
+	_, err := r.doRequest("DELETE", "/api/permissions/"+vhost+"/"+user, nil)
 	if err != nil {
 		return err
 	}
