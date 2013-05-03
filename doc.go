@@ -3,7 +3,9 @@ Implementation of RabbitMq Management HTTP Api in Go. Alpha status.
 
 Currently supported api calls are:
 
-    GET     /api/exchanges/
+    GET     /api/overview
+
+    GET     /api/exchanges
     GET     /api/exchanges/vhost/name
     PUT     /api/exchanges/vhost/name
     DELETE  /api/exchanges/vhost/name

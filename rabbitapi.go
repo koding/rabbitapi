@@ -23,6 +23,60 @@ type Status struct {
 	Status string
 }
 
+type Overview struct {
+	Contexts []struct {
+		Description string `json:"description"`
+		Node        string `json:"node"`
+		Path        string `json:"path"`
+		Port        int    `json:"port"`
+	} `json:"contexts"`
+	ErlangVersion string `json:"erlang_version"`
+	ExchangeTypes []struct {
+		Description string `json:"description"`
+		Enabled     bool   `json:"enabled"`
+		Name        string `json:"name"`
+	} `json:"exchange_types"`
+	Listeners []struct {
+		IpAdress string `json:"ip_address"`
+		Node     string `json:"node"`
+		Port     int    `json:"port"`
+		Protocol string `json:"protocol"`
+	} `json:"listeners"`
+	ManagementVersion string   `json:"management_version"`
+	MessageStats      []string `json:"message_stats"`
+	Node              string   `json:"node"`
+	ObjectTotals      struct {
+		Channels    int `json:"channels"`
+		Connections int `json:"connections`
+		Consumers   int `json:"consumers`
+		Exchanges   int `json:"exchanges`
+		Queues      int `json:"queues`
+	} `json:"object_totals"`
+	QueueTotals struct {
+		Messages        int `json:"messages"`
+		MessagesDetails struct {
+			Interval  int     `json:"interval"`
+			LastEvent int     `json:"last_event"`
+			Rate      float64 `json:"rate"`
+		} `json:"messages_details"`
+		MessagesReady        int `json:"messages_ready"`
+		MessagesReadyDetails struct {
+			Interval  int     `json:"interval"`
+			LastEvent int     `json:"last_event"`
+			Rate      float64 `json:"rate"`
+		} `json:"messages_ready_details"`
+		MessagesUnacknowledged        int `json:"messages_unacknowledged"`
+		MessagesUnacknowledgedDetails struct {
+			Interval  int     `json:"interval"`
+			LastEvent int     `json:"last_event"`
+			Rate      float64 `json:"rate"`
+		} `json:"messages_unacknowledged_details"`
+	} `json:"queue_totals"`
+	RabbitmqVersion  string `json:"rabbitmq_version"`
+	StatisticsDbNode string `json:"statistics_db_node"`
+	StatisticsLevel  string `json:"statistics_level"`
+}
+
 // Auth is used to create the initial struct that will used for all api calls.
 // If you pass empty strings, default values will be:
 //
@@ -47,6 +101,23 @@ func Auth(username, password, url string) *Rabbit {
 		Password: password,
 		Url:      url,
 	}
+}
+
+// Various random bits of information that describe the whole system, like
+// number of exchanges, connection information, erlang version, etc..
+func (r *Rabbit) GetOverview() (Overview, error) {
+	body, err := r.doRequest("GET", "/api/overview", nil)
+	if err != nil {
+		return Overview{}, err
+	}
+
+	overview := Overview{}
+	err = json.Unmarshal(body, &overview)
+	if err != nil {
+		return Overview{}, err
+	}
+
+	return overview, nil
 }
 
 // AlivenessTest declares a test queue (with the name alivness test) for the
