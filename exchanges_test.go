@@ -61,3 +61,13 @@ func TestRabbit_DeleteExchange(t *testing.T) {
 		t.Error("exchange 'rabbitapi':", exchange)
 	}
 }
+
+func TestRabbit_GetExchangeSources(t *testing.T) {
+	r := Auth("guest", "guest", "http://localhost:15672")
+	sources, err := r.GetExchangeSource("/", "amq.default")
+	if err != nil {
+		t.Error(err)
+	} else {
+		t.Log("bindings which the exchange 'amq.default' is the source:", sources)
+	}
+}

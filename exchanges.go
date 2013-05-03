@@ -14,6 +14,16 @@ type Exchange struct {
 	Vhost      string                 `json:"vhost"`
 }
 
+type ExchangeSource struct {
+	Arguments       map[string]interface{} `json:"arguments"`
+	Destination     string                 `json:"destination"`
+	DestinationType string                 `json:"destination_type"`
+	PropertiesKey   string                 `json:"properties_key"`
+	RoutingKey      string                 `json:"routing_key"`
+	Source          string                 `json:"source"`
+	Vhost           string                 `json:"vhost"`
+}
+
 // GetExchanges() returns a list of all exchanges.
 func (r *Rabbit) GetExchanges() ([]Exchange, error) {
 	body, err := r.getRequest("/api/exchanges")
@@ -113,4 +123,25 @@ func (r *Rabbit) DeleteExchange(vhost, name string) error {
 	}
 
 	return nil
+}
+
+// GetExchangeSource returns a list of all bindings in which a given exchange
+// is the source.
+func (r *Rabbit) GetExchangeSource(vhost, name string) ([]ExchangeSource, error) {
+	if vhost == "/" {
+		vhost = "%2f"
+	}
+
+	body, err := r.getRequest("/api/exchanges/" + vhost + "/" + name + "/bindings/source")
+	if err != nil {
+		return nil, err
+	}
+
+	exchangeSources := make([]ExchangeSource, 0)
+	err = json.Unmarshal(body, &exchangeSources)
+	if err != nil {
+		return nil, err
+	}
+
+	return exchangeSources, nil
 }

@@ -7,6 +7,7 @@ Currently supported api calls are:
     GET     /api/exchanges/vhost/name
     PUT     /api/exchanges/vhost/name
     DELETE  /api/exchanges/vhost/name
+    GET     /api/exchanges/vhost/name/bindings/source
 
     GET     /api/vhosts
     GET     /api/vhosts/name

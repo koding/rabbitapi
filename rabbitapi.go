@@ -48,11 +48,11 @@ func Auth(username, password, url string) *Rabbit {
 	}
 }
 
-// AlivenessTest declares a test queue for the given vhost, then publishes and
-// consumes a message. Intended for use by monitoring tools. If everything is
-// working correctly, will return HTTP status 200 with body. Note: the test
-// queue will not be deleted (to to prevent queue churn if this is repeatedly
-// pinged).
+// AlivenessTest declares a test queue (with the name alivness test) for the
+// given vhost, then publishes and consumes a message. Intended for use by
+// monitoring tools. If everything is working correctly, will return an error
+// of type nil. Note: the test queue will not be deleted (to to prevent queue
+// churn if this is repeatedly pinged).
 func (r *Rabbit) AlivenessTest(vhost string) error {
 	if vhost == "/" {
 		vhost = "%2f"
